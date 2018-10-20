@@ -18,6 +18,10 @@ app.use(bodyParser.json());
 app.set('view engine', 'ejs');
 
 
+const PORT = process.env.PORT || 5000;
+
+
+
 //db stuff (work in progress)
 var nodeSchema = new mongoose.Schema({
     name: String,
@@ -169,7 +173,7 @@ app.use(function(err, req, res, next){
 
 
 
-app.listen(process.env.PORT, process.env.IP, function() {
+app.listen(PORT, process.env.IP, function() {
   //var addr = app.address();
   //console.log("App started at ", addr.address + ":" + addr.port);
   console.log("App started");
