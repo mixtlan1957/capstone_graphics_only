@@ -1,10 +1,10 @@
 
 var cytoscape = require('cytoscape');
 var express = require('express');
-var bodyParser = require('body-parser');
 var app = express();
 var mongoose = require("mongoose");
-mongoose.connect("mongodb://localhost:27017/testsdb", { useNewUrlParser: true});
+var dbUrl = process.env.MONGODB_URI;
+mongoose.connect(dbUrl, { useNewUrlParser: true});
 
 app.use(express.static("public"));
 
@@ -54,9 +54,8 @@ testSite1.save(function(err, WebNode) {
 
 /*
 WebNode.create({
-  name: "reddit.com",
-  parent: "super.com",
-  children:["newegg.com", "mgtgoldfish.com"],
+  name: "bilbo.com",
+  children:[],
   sqli: false,
   xss: false 
   
@@ -86,7 +85,8 @@ WebNode.find({}, function(err, webNodes) {
 var fs = require("fs");
 var obj = [];
 
-//traverse the data stored in the 
+//this function was for testing purposes only and is to become obsolete
+//written to pull data graph data from database instead of request body
 function createDataForm() {
   //get what is in the database
   WebNode.find({}, function(err, webNodes) {
@@ -101,11 +101,11 @@ function createDataForm() {
       //add nodes to JSON table
       for (var i = 0; i < webNodes.length; i++) {
         
-        //only parent node should initially need to be pushed
+        //only root node should initially need to be pushed
         if (i == 0) {
           obj.push({data: {id:  webNodes[i].name}});
         }
-        console.log(webNodes[i].children.length);
+        //console.log(webNodes[i].children.length);
         for (var j = 0; j < webNodes[i].children.length; j++) {
           
           var parentNode = webNodes[i].name;
@@ -137,8 +137,48 @@ function createDataForm() {
   });
 }
 
+//todo: validate request input
+function validateRequest(input) {
+
+}
+
+//This function takes a JSON request (body) and creates a JSON object
+//that matches the formatting required by the 'data.json' file for
+//graph generation using cytoscape.js
+function createDataFromJSON(jsonInput) {
+  console.log(jsonInput);
+
+  //validate request: todo
+
+  //create JSON output object
+  var obj = [];
+  //add nodes to JSON table
+  for(var i = 0; i < jsonInput.length; i++) {
+    //only root node should initially need to be pushed
+    if (i == 0) {
+      obj.push({data: {id:  jsonInput[i].name}});
+    }
+    for (var j = 0; j < jsonInput[i].children.length; j++) {
+          
+      var parentNode = jsonInput[i].name;
+      var childName = jsonInput[i].children[j];
+      var concatName = parentNode + childName;  //define the edge ie connection
+      
+      //add the child node
+      obj.push({data: {id: childName} } );
+      
+      //add the edge
+      obj.push({data: {id: concatName, source: parentNode, target: childName } });
+    }
+  }
+  //convert to JSON
+  var jsonOutput = JSON.stringify(obj);
+
+  return jsonOutput;
+}
+
 //create data before page is loaded (we could also use a another callback)
-createDataForm();
+//createDataForm();
 
 //routes
 app.get('/', function(req, res){
@@ -146,9 +186,24 @@ app.get('/', function(req, res){
     if(err) {
       console.log(err);
     } else {
-      
-      
-      res.render('pages/index');
+      //createDataForm();
+      res.render('pages/index'); 
+    }
+  });
+});
+
+app.post('/graphs', function(req, res){
+
+  var graphData = createDataFromJSON(req.body);
+  //console.log(graphData);
+
+  fs.writeFile('public/data.json', graphData, function(err){
+    if(err) {
+      throw err;
+    } else {
+      console.log('post request successfully written to file');
+      res.status(201);
+      res.redirect('pages/index');
     }
   });
 });
