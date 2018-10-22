@@ -21,7 +21,24 @@ var cy = window.cy = cytoscape({
         {
           selector: 'node',
           style: {
-            'background-color': '#ad1a66'
+            'background-color': 'blue',
+            'content': 'data(id)'
+          }
+        },
+
+        {
+          selector: '.sqliFound',
+          style: {
+            'background-color': 'blue',
+            'shape': 'triangle'
+          }
+        },
+
+        {
+          selector: '.xssFound',
+          style: {
+            'background-color': 'blue',
+            'shape': 'diamond'
           }
         },
 
@@ -38,24 +55,34 @@ var cy = window.cy = cytoscape({
     
       
     //load subsequent nodes
-    
-    
     elements: data
-    
-    /*
-    elements: [
-      { data: { id: 'a' } },
-      { data: { id: 'b' } },
-      {
-        data: {
-          id: 'ab',
-          source: 'a',
-          target: 'b'
-        }
-    }]
-    */
+
+      
+    //change the style of the nodes if necessary
+
+   
     
 });
+//change formating if necessary.... (wip)
+cy.nodes().forEach(function( ele ){
+  if (ele.data("sqli") == true){
+    //cy.$(ele.data("id")).classes("secondClass");
+    ele.classes('sqliFound');
+    ele.animate({
+      style: {
+        'background-color': 'red',
+      }
+    });
+  } else if (ele.data("xss") == true) {
+    ele.classes('xssFound');
+    ele.animate({
+      style: {
+        'background-color': 'red',
+      }
+    });
+  }
+}); 
+
 });
 
 

@@ -154,18 +154,28 @@ function createDataFromJSON(jsonInput) {
   var obj = [];
   //add nodes to JSON table
   for(var i = 0; i < jsonInput.length; i++) {
-    //only root node should initially need to be pushed
-    if (i == 0) {
-      obj.push({data: {id:  jsonInput[i].name}});
+    if (jsonInput[i].xss == true && jsonInput[i].sqli == true) {
+     obj.push({data: {id:  jsonInput[i].name, "xss": true, "sqli": true}});
     }
+    else if(jsonInput[i].xss == true && jsonInput[i].sqli == false) {
+      obj.push({data: {id:  jsonInput[i].name, "xss": true, "sqli": false}});
+    }
+    else if(jsonInput[i].xss == false && jsonInput[i].sqli == true) {
+      obj.push({data: {id:  jsonInput[i].name, "xss": false, "sqli": true}});
+    }
+    else {
+      obj.push({data: {id:  jsonInput[i].name, "xss": false, "sqli": false}});
+    }
+
+    //add edges
     for (var j = 0; j < jsonInput[i].children.length; j++) {
-          
+
       var parentNode = jsonInput[i].name;
       var childName = jsonInput[i].children[j];
       var concatName = parentNode + childName;  //define the edge ie connection
-      
+    
       //add the child node
-      obj.push({data: {id: childName} } );
+      //obj.push({data: {id: childName}});
       
       //add the edge
       obj.push({data: {id: concatName, source: parentNode, target: childName } });
