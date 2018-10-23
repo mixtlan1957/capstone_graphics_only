@@ -22,10 +22,9 @@ var cy = window.cy = cytoscape({
           selector: 'node',
           style: {
             'background-color': 'blue',
-            'content': 'data(id)'
+            //'content': 'data(id)'
           }
         },
-
         {
           selector: '.sqliFound',
           style: {
@@ -48,7 +47,34 @@ var cy = window.cy = cytoscape({
             'width': 3,
             'line-color': '#ad1a66'
           }
+        },
+
+        {
+          selector: '.hoverOverXSS',
+          style: {
+            'content': 'data(id)',
+            'background-color': 'red',
+            'shape': 'diamond'
+          }
+        },
+
+        {
+          selector: '.hoverOverSQLI',
+          style: {
+            'content': 'data(id)',
+            'background-color': 'red',
+            'shape': 'triangle'
+          }
+        },
+
+        {
+          selector: '.hoverOver',
+          style: {
+            'content': 'data(id)',
+            'background-color': 'blue'
+          }
         }
+
       ],
       
   
@@ -63,25 +89,73 @@ var cy = window.cy = cytoscape({
    
     
 });
-//change formating if necessary.... (wip)
+//changes the format based on wether or not xss or sqli flag has been marked
 cy.nodes().forEach(function( ele ){
   if (ele.data("sqli") == true){
     //cy.$(ele.data("id")).classes("secondClass");
     ele.classes('sqliFound');
     ele.animate({
       style: {
-        'background-color': 'red',
+        'background-color': 'red'
       }
     });
   } else if (ele.data("xss") == true) {
     ele.classes('xssFound');
     ele.animate({
       style: {
-        'background-color': 'red',
+        'background-color': 'red'
       }
     });
+  } 
+});
+
+
+
+//mouseover effects (wip)
+
+cy.on('mouseover', 'node', function(evt) {
+  var node = evt.target;
+
+  if (node.data("sqli") == true) {
+    node.classes('hoverOverSQLI');
   }
-}); 
+  else if (node.data("xss") == true) {
+    node.classes('hoverOverXSS');
+  }
+  else {
+    node.classes('hoverOver');
+  }
+
+  cy.on('mouseout', 'node', function(evt){
+    var node = evt.target;
+    if (node.data("sqli") == true) {
+      node.classes('sqliFound');
+    }
+    else if (node.data("xss") == true) {
+      node.classes('xssFound');
+    }
+    else {
+      node.classes('node');
+    }
+  });
+});
+
+//follow link
+cy.on('tap', 'node', function() {
+  var url = this.data('id');
+  console.log(url);
+  try {
+    //ciatation:
+    //https://stackoverflow.com/questions/29684740/javascript-window-open-without-http
+    if (!url.match(/^http?:\/\//i) || !url.match(/^https?:\/\//i)) {
+      url = 'http://' + url;
+    }
+    window.open(url);
+  } catch(e) {
+    window.location.href = this.data(url);
+  }
+});
+
 
 });
 
