@@ -154,17 +154,40 @@ function createDataFromJSON(jsonInput) {
   var obj = [];
   //add nodes to JSON table
   for(var i = 0; i < jsonInput.length; i++) {
-    if (jsonInput[i].xss == true && jsonInput[i].sqli == true) {
-     obj.push({data: {id:  jsonInput[i].name, "xss": true, "sqli": true}});
+    //root node case
+    if (i == 0 && jsonInput[i].xss == true && jsonInput[i].sqli == true) {
+      obj.push({data: {id:  jsonInput[i].name, "xss": true, 
+     "sqli": true, "root": true}});
     }
-    else if(jsonInput[i].xss == true && jsonInput[i].sqli == false) {
-      obj.push({data: {id:  jsonInput[i].name, "xss": true, "sqli": false}});
+    else if (i == 0 && jsonInput[i].xss == true && jsonInput[i].sqli == false) {
+      obj.push({data: {id:  jsonInput[i].name, "xss": true, 
+      "sqli": false, "root": true}});
     }
-    else if(jsonInput[i].xss == false && jsonInput[i].sqli == true) {
-      obj.push({data: {id:  jsonInput[i].name, "xss": false, "sqli": true}});
+    else if (i == 0 && jsonInput[i].xss == false && jsonInput[i].sqli == true) {
+      obj.push({data: {id:  jsonInput[i].name, "xss": false, 
+      "sqli": true, "root": true}});
     }
-    else {
-      obj.push({data: {id:  jsonInput[i].name, "xss": false, "sqli": false}});
+    else if (i == 0) {
+      obj.push({data: {id:  jsonInput[i].name, "xss": false, 
+      "sqli": false, "root": true}});
+    }
+
+    //all other nodes
+    if (i > 0 && jsonInput[i].xss == true && jsonInput[i].sqli == true) {
+     obj.push({data: {id:  jsonInput[i].name, "xss": true, 
+     "sqli": true, "root": false}});
+    }
+    else if(i > 0 && jsonInput[i].xss == true && jsonInput[i].sqli == false) {
+      obj.push({data: {id:  jsonInput[i].name, "xss": true, 
+      "sqli": false, "root": false}});
+    }
+    else if(i > 0 && jsonInput[i].xss == false && jsonInput[i].sqli == true) {
+      obj.push({data: {id:  jsonInput[i].name, "xss": false, 
+      "sqli": true, "root": false}});
+    }
+    else if (i > 0) {
+      obj.push({data: {id:  jsonInput[i].name, "xss": false, 
+      "sqli": false, "root": false}});
     }
 
     //add edges
@@ -173,9 +196,6 @@ function createDataFromJSON(jsonInput) {
       var parentNode = jsonInput[i].name;
       var childName = jsonInput[i].children[j];
       var concatName = parentNode + childName;  //define the edge ie connection
-    
-      //add the child node
-      //obj.push({data: {id: childName}});
       
       //add the edge
       obj.push({data: {id: concatName, source: parentNode, target: childName } });
@@ -213,7 +233,7 @@ app.post('/graphs', function(req, res){
     } else {
       console.log('post request successfully written to file');
       res.status(201);
-      res.redirect('pages/index');
+      res.redirect('/');
     }
   });
 });
