@@ -150,8 +150,8 @@ cy.on('tap', 'node', function() {
     substring = "///";
 
   //strip out tripple '/' if necessary
-  var foundIdx = str.indexOf(substring);
-  if (foundIdx != -1) {
+  var foundIdx = url.indexOf(substring);
+  if (foundIdx !== -1) {
     var temp = url.substring(foundIdx + 3, url.length);
     url = temp;
   }
