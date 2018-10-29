@@ -146,8 +146,19 @@ cy.on('mouseover', 'node', function(evt) {
 
 //follow link
 cy.on('tap', 'node', function() {
-  var url = this.data('id');
-  console.log(url);
+  var url = this.data('id'),
+    substring = "///";
+
+  //strip out tripple '/' if necessary
+  var foundIdx = string.indexOf(substring);
+  if (foundIdx != -1) {
+    var temp = url.substring(foundIdx + 3, url.length);
+    url = temp;
+  }
+
+
+
+  
   try {
     //ciatation:
     //https://stackoverflow.com/questions/29684740/javascript-window-open-without-http
