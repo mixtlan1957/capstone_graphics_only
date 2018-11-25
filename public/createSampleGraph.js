@@ -110,7 +110,13 @@ cy.nodes().forEach(function( ele ){
         'background-color': 'red'
       }
     });
-  } 
+  } else if (ele.data("root") == true) {
+    ele.animate({
+      style: {
+        'background-color': 'pink'
+      }
+    })
+  }
 });
 
 

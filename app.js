@@ -152,45 +152,21 @@ function createDataFromJSON(jsonInput) {
 
   //create JSON output object
   var obj = [];
+
   //add nodes to JSON table
+  //format (per node basis) {data: {id : etc}}
   for(var i = 0; i < jsonInput.length; i++) {
-    //root node case
-    if (i == 0 && jsonInput[i].xss == true && jsonInput[i].sqli == true) {
-      obj.push({data: {id:  jsonInput[i].name, "xss": true, 
-     "sqli": true, "root": true}});
-    }
-    else if (i == 0 && jsonInput[i].xss == true && jsonInput[i].sqli == false) {
-      obj.push({data: {id:  jsonInput[i].name, "xss": true, 
-      "sqli": false, "root": true}});
-    }
-    else if (i == 0 && jsonInput[i].xss == false && jsonInput[i].sqli == true) {
-      obj.push({data: {id:  jsonInput[i].name, "xss": false, 
-      "sqli": true, "root": true}});
-    }
-    else if (i == 0) {
-      obj.push({data: {id:  jsonInput[i].name, "xss": false, 
-      "sqli": false, "root": true}});
-    }
+    //add nodes
+    var item = {};
+    var data = {};
+    data["id"] = jsonInput[i].name;
+    data["xss"] = jsonInput[i].xss;
+    data["sqli"] = jsonInput[i].sqli;
+    data["root"] = jsonInput[i].isCrawlRoot;
+    item["data"] = data;
+    
+    obj.push(item);
 
-    //all other nodes
-    if (i > 0 && jsonInput[i].xss == true && jsonInput[i].sqli == true) {
-     obj.push({data: {id:  jsonInput[i].name, "xss": true, 
-     "sqli": true, "root": false}});
-    }
-    else if(i > 0 && jsonInput[i].xss == true && jsonInput[i].sqli == false) {
-      obj.push({data: {id:  jsonInput[i].name, "xss": true, 
-      "sqli": false, "root": false}});
-    }
-    else if(i > 0 && jsonInput[i].xss == false && jsonInput[i].sqli == true) {
-      obj.push({data: {id:  jsonInput[i].name, "xss": false, 
-      "sqli": true, "root": false}});
-    }
-    else if (i > 0) {
-      obj.push({data: {id:  jsonInput[i].name, "xss": false, 
-      "sqli": false, "root": false}});
-    }
-
-    //add edges
     for (var j = 0; j < jsonInput[i].children.length; j++) {
 
       var parentNode = jsonInput[i].name;
@@ -199,8 +175,9 @@ function createDataFromJSON(jsonInput) {
       
       //add the edge
       obj.push({data: {id: concatName, source: parentNode, target: childName } });
-    }
+    }    
   }
+
   //convert to JSON
   var jsonOutput = JSON.stringify(obj);
 
