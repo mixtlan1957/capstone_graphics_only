@@ -163,6 +163,15 @@ function createDataFromJSON(jsonInput) {
     data["xss"] = jsonInput[i].xss;
     data["sqli"] = jsonInput[i].sqli;
     data["root"] = jsonInput[i].isCrawlRoot;
+    data["keyword"] = jsonInput[i].keyword;
+    data["title"] = jsonInput[i].title;
+    if(jsonInput[i].hasOwnProperty('title') ) {
+      var str = data["title"] + " - " + data["id"];
+      data["material"] = str;
+    }
+    else {
+      data["material"] = data["id"];
+    }
     item["data"] = data;
     
     obj.push(item);

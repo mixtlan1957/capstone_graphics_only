@@ -24,8 +24,8 @@ var cy = window.cy = cytoscape({
             'background-color': 'blue',
             'width': 6,
             'height': 6,
-            'text-valign': 'center',
-            'font-size': 4
+            'text-valign': 'top',
+            'font-size': 3
             //'content': 'data(id)'
           }
         },
@@ -56,7 +56,7 @@ var cy = window.cy = cytoscape({
         {
           selector: '.hoverOverXSS',
           style: {
-            'content': 'data(id)',
+            'content': 'data(material)',
             'background-color': 'red',
             'shape': 'diamond'
           }
@@ -65,7 +65,7 @@ var cy = window.cy = cytoscape({
         {
           selector: '.hoverOverSQLI',
           style: {
-            'content': 'data(id)',
+            'content': 'data(material)',
             'background-color': 'red',
             'shape': 'triangle'
           }
@@ -73,8 +73,9 @@ var cy = window.cy = cytoscape({
 
         {
           selector: '.hoverOver',
+          
           style: {
-            'content': 'data(id)',
+            'content': 'data(material)',
             'background-color': 'blue'
           }
         }
@@ -115,7 +116,13 @@ cy.nodes().forEach(function( ele ){
       style: {
         'background-color': 'pink'
       }
-    })
+    });
+  } else if (ele.data("keyword") == true) {
+    ele.animate({
+      style: {
+        'background-color': 'green'
+      }
+    });
   }
 });
 
