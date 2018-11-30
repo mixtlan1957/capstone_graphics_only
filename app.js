@@ -31,7 +31,7 @@ var nodeSchema = new mongoose.Schema({
 });
 
 var WebNode = mongoose.model("WebNode", nodeSchema);
-webNode.create;
+//webNode.create;
 
 /*
 var testSite1 = new WebNode({
@@ -204,7 +204,7 @@ app.get('/', function(req, res){
     if(err) {
       console.log(err);
     } else {
-      createDataForm();
+      //createDataForm();
       res.render('pages/index'); 
     }
   });
