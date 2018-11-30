@@ -31,7 +31,7 @@ var nodeSchema = new mongoose.Schema({
 });
 
 var WebNode = mongoose.model("WebNode", nodeSchema);
-webNode.create;
+//webNode.create;
 
 /*
 var testSite1 = new WebNode({
@@ -172,8 +172,6 @@ function createDataFromJSON(jsonInput) {
     else {
       data["material"] = data["id"];
     }
-    data["testInfo"] = jsonInput[i].TestInfo;
-    data["XssTestInfo"] = jsonInput[i].XssTestInfo;
     item["data"] = data;
     
     obj.push(item);
@@ -204,7 +202,7 @@ app.get('/', function(req, res){
     if(err) {
       console.log(err);
     } else {
-      createDataForm();
+      //createDataForm();
       res.render('pages/index'); 
     }
   });
@@ -251,3 +249,4 @@ app.listen(PORT, process.env.IP, function() {
   //console.log("App started at ", addr.address + ":" + addr.port);
   console.log("App started");
 });
+
