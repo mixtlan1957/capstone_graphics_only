@@ -44,6 +44,13 @@ var cy = window.cy = cytoscape({
             'shape': 'diamond'
           }
         },
+        {
+          selector: '.bothFound',
+          style: {
+            'background-color': 'red',
+            'shape': 'star'
+          }
+        },
 
         {
           selector: 'edge',
@@ -96,7 +103,17 @@ var cy = window.cy = cytoscape({
 });
 //changes the format based on wether or not xss or sqli flag has been marked
 cy.nodes().forEach(function( ele ){
-  if (ele.data("sqli") == true){
+  
+  if ( ele.data("xss") == true && (ele.data("sqli") == true) ) {
+    ele.classes('bothFound');
+    ele.animate({
+      style: {
+        'shape': 'star',
+        'background-color': 'red'
+      }
+    });
+  }
+  else if (ele.data("sqli") == true){
     //cy.$(ele.data("id")).classes("secondClass");
     ele.classes('sqliFound');
     ele.animate({
@@ -111,7 +128,8 @@ cy.nodes().forEach(function( ele ){
         'background-color': 'red'
       }
     });
-  } else if (ele.data("root") == true) {
+  }
+  else if (ele.data("root") == true) {
     ele.animate({
       style: {
         'background-color': 'pink'
@@ -132,8 +150,10 @@ cy.nodes().forEach(function( ele ){
 
 cy.on('mouseover', 'node', function(evt) {
   var node = evt.target;
-
-  if (node.data("sqli") == true) {
+  if (node.data("sqli") == true && node.data("xss") == true){
+    node.classes('bothFound')
+  }
+  else if (node.data("sqli") == true) {
     node.classes('hoverOverSQLI');
   }
   else if (node.data("xss") == true) {
@@ -145,7 +165,11 @@ cy.on('mouseover', 'node', function(evt) {
 
   cy.on('mouseout', 'node', function(evt){
     var node = evt.target;
-    if (node.data("sqli") == true) {
+    if (node.data("xss") == true && node.data("sqli") == true) {
+      node.classes('bothFound');
+    }
+
+    else if (node.data("sqli") == true) {
       node.classes('sqliFound');
     }
     else if (node.data("xss") == true) {
@@ -174,10 +198,11 @@ cy.on('tap', 'node', function(evt) {
   var nodeData = this.data()
 
   //dummy arrays for what would hold the real fuzz results
-  nodeData.testInfo = [ "input with id 'user' failed sql test",
-  "input with id 'name' failed sql test"];
+  
+  // nodeData.testInfo = [ "input with id 'user' failed sql test",
+  // "input with id 'name' failed sql test"];
 
-  nodeData.XssTestInfo = [ "reflection xss detected" ];
+  // nodeData.XssTestInfo = [ "reflection xss detected" ];
 
   //make table
   var newTable = document.createElement("table");
