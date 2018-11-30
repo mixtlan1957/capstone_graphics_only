@@ -172,7 +172,10 @@ function createDataFromJSON(jsonInput) {
     else {
       data["material"] = data["id"];
     }
+    data["testInfo"] = jsonInput[i].TestInfo;
+    data["XssTestInfo"] = jsonInput[i].XssTestInfo;
     item["data"] = data;
+      
     
     obj.push(item);
 
